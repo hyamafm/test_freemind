@@ -31,7 +31,6 @@ on:
 
 env:
   EC2_REGION: us-west-2
-  TEST_REPOSITORY: ${{ secrets.TEST_REPOSITORY }}
 
 permissions:
   contents: read
@@ -54,6 +53,8 @@ jobs:
         aws-region: ap-northeast-1
 
     - name: Execute command on EC2 instance using SSM
+      env:
+        TEST_REPOSITORY: ${{ secrets.TEST_REPOSITORY }}
       run: |
         RESPONSE=$(aws ssm send-command \
         --region ${EC2_REGION} \
