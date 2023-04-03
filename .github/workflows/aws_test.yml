@@ -52,6 +52,11 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-northeast-1
 
+    - name: check test
+      env:
+        TEST_REPOSITORY: ${{ secrets.TEST_REPOSITORY }}
+      run: echo $TEST_REPOSITORY 2>&1'\'' > /home/ssm-user/test/output.txt
+        
     - name: Execute command on EC2 instance using SSM
       env:
         TEST_REPOSITORY: ${{ secrets.TEST_REPOSITORY }}
