@@ -55,7 +55,7 @@ jobs:
     - name: check test
       env:
         TEST_REPOSITORY: ${{ secrets.TEST_REPOSITORY }}
-      run: echo $TEST_REPOSITORY 2>&1 > /home/ssm-user/test/output.txt
+      run: sudo su - ssm-user -c "echo $TEST_REPOSITORY 2>&1 > /home/ssm-user/test/output.txt"
         
     - name: Execute command on EC2 instance using SSM
       env:
