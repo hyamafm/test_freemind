@@ -59,7 +59,7 @@ jobs:
         --instance-ids i-0ae0f8385db7ce158 \
         --document-name "AWS-RunShellScript" \
         --comment "Run script" \
-        --parameters '{"commands":["sudo su - ssm-user -c '\''cd /home/ssm-user/test && eval \"$(ssh-agent -s)\" && ssh-add ~/.ssh/github_key && echo $TEST_REPOSITORY && git clone \"${{ secrets.TEST_REPOSITORY }}\" 2>&1'\'' > /home/ssm-user/test/output.txt"]}' \
+        --parameters '{"commands":["sudo su - ssm-user -c '\''cd /home/ssm-user/test && eval \"$(ssh-agent -s)\" && ssh-add ~/.ssh/github_key && git clone \"${{ secrets.TEST_REPOSITORY }}\"'\''"]}' \
         --timeout-seconds 600 \
         --max-concurrency "50" \
         --max-errors "0")
