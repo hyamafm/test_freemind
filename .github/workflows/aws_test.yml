@@ -31,6 +31,7 @@ on:
 
 env:
   EC2_REGION: us-west-2
+  TEST_REPOSITORY: ${{ secrets.TEST_REPOSITORY }}
 
 permissions:
   contents: read
@@ -59,7 +60,7 @@ jobs:
         --instance-ids i-0ae0f8385db7ce158 \
         --document-name "AWS-RunShellScript" \
         --comment "Run script" \
-        --parameters '{"commands":["sudo su - ssm-user -c '\''cd /home/ssm-user/test && eval \"$(ssh-agent -s)\" && ssh-add ~/.ssh/github_key && git clone \"${{ secrets.TEST_REPOSITORY }}\"'\''"]}' \
+        --parameters '{"commands":["sudo su - ssm-user -c '\''cd /home/ssm-user/test && eval \"$(ssh-agent -s)\" && ssh-add ~/.ssh/github_key && git clone \"$TEST_REPOSITORY\"'\''"]}' \
         --timeout-seconds 600 \
         --max-concurrency "50" \
         --max-errors "0")
