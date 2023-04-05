@@ -64,4 +64,7 @@ jobs:
         INACTIVE_TARGET_INSTANCE_ID=`aws elbv2 describe-target-health --target-group-arn $INACTIVE_TARGET_ARN | jq -r '.TargetHealthDescriptions[].Target.Id'`
 
         aws ec2 start-instances --instance-ids $INACTIVE_TARGET_INSTANCE_ID
+        aws elbv2 modify-listener \
+        --listener-arn  $LISTENER_ARN \
+        --default-actions '[{"Type": "forward", "Order": 1, "ForwardConfig": {"TargetGroups": [{ "TargetGroupArn": "'$ACTIVE_TARGET_ARN'", "Weight": 0},{"TargetGroupArn": "'$INACTIVE_TARGET_ARN'", "Weight": 1}], "TargetGroupStickinessConfig": {"Enabled": true, "DurationSeconds": 30}}}]'
         aws ec2 stop-instances --instance-ids $ACTIVE_TARGET_INSTANCE_ID
