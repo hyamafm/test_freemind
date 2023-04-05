@@ -66,6 +66,13 @@ jobs:
 
         aws ec2 start-instances --instance-ids $INACTIVE_TARGET_INSTANCE_ID
         aws ec2 wait instance-running --instance-ids $INACTIVE_TARGET_INSTANCE_ID
+        EC2_STATUS=`aws ec2 describe-instance-status --include-all-instances --instance-ids $INACTIVE_TARGET_INSTANCE_ID | jq -r '.InstanceStatuses[].InstanceState.Name'`
+        if [ $EC2_STATUS = "running" ]; then
+          echo "$INACTIVE_TARGET_INSTANCE_IDを起動しました"
+        else
+          echo "$INACTIVE_TARGET_INSTANCE_IDは起動に失敗しました。"
+        fi
+
         aws elbv2 modify-listener \
         --listener-arn  $LISTENER_ARN \
         --default-actions '[{"Type": "forward", "Order": 1, "ForwardConfig": {"TargetGroups": [{ "TargetGroupArn": "'$ACTIVE_TARGET_ARN'", "Weight": 0},{"TargetGroupArn": "'$INACTIVE_TARGET_ARN'", "Weight": 1}], "TargetGroupStickinessConfig": {"Enabled": true, "DurationSeconds": 30}}}]'
