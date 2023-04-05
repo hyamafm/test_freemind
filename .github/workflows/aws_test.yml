@@ -45,3 +45,8 @@ jobs:
         
     - name: Build Docker image
       run: docker image build -t test:latest .
+      
+    - name: deploy done
+      shell: bash
+      run: |
+        ./release.sh
