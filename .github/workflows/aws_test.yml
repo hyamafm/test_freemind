@@ -55,6 +55,7 @@ jobs:
         aws configure set region us-west-2
 
     - name: Start EC2 instance
+      shell: bash
       run: |
         ALB_ARN=`aws elbv2 describe-load-balancers --names=dev-elb-test | jq -r '.LoadBalancers[].LoadBalancerArn'`
         LISTENER_ARN=`aws elbv2 describe-listeners --load-balancer-arn $ALB_ARN | jq -r '.Listeners[] | select(.Port == 443)' | jq -r '.ListenerArn'`
@@ -64,6 +65,7 @@ jobs:
         INACTIVE_TARGET_INSTANCE_ID=`aws elbv2 describe-target-health --target-group-arn $INACTIVE_TARGET_ARN | jq -r '.TargetHealthDescriptions[].Target.Id'`
 
         aws ec2 start-instances --instance-ids $INACTIVE_TARGET_INSTANCE_ID
+        aws ec2 wait instance-running --instance-ids $INACTIVE_TARGET_INSTANCE_ID
         aws elbv2 modify-listener \
         --listener-arn  $LISTENER_ARN \
         --default-actions '[{"Type": "forward", "Order": 1, "ForwardConfig": {"TargetGroups": [{ "TargetGroupArn": "'$ACTIVE_TARGET_ARN'", "Weight": 0},{"TargetGroupArn": "'$INACTIVE_TARGET_ARN'", "Weight": 1}], "TargetGroupStickinessConfig": {"Enabled": true, "DurationSeconds": 30}}}]'
