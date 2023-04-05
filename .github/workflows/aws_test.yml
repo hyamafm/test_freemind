@@ -56,5 +56,12 @@ jobs:
 
     - name: Start EC2 instance
       run: |
-        aws ec2 start-instances --instance-ids i-0ae0f8385db7ce158
-        aws ec2 wait instance-running --instance-ids i-0ae0f8385db7ce158
+        ALB_ARN=`aws elbv2 describe-load-balancers --names=dev-elb-test | jq -r '.LoadBalancers[].LoadBalancerArn'`
+        LISTENER_ARN=`aws elbv2 describe-listeners --load-balancer-arn $ALB_ARN | jq -r '.Listeners[] | select(.Port == 443)' | jq -r '.ListenerArn'`
+        ACTIVE_TARGET_ARN=`aws elbv2 describe-listeners --load-balancer-arn $ALB_ARN | jq -r '.Listeners[] | select(.Port == 443)' | jq -r '.DefaultActions[].ForwardConfig.TargetGroups[] | select(.Weight == 1)' | jq -r '.TargetGroupArn'`
+        INACTIVE_TARGET_ARN=`aws elbv2 describe-listeners --load-balancer-arn $ALB_ARN | jq -r '.Listeners[] | select(.Port == 443)' | jq -r '.DefaultActions[].ForwardConfig.TargetGroups[] | select(.Weight == 0)' | jq -r '.TargetGroupArn'`
+        ACTIVE_TARGET_INSTANCE_ID=`aws elbv2 describe-target-health --target-group-arn $ACTIVE_TARGET_ARN | jq -r '.TargetHealthDescriptions[].Target.Id'`
+        INACTIVE_TARGET_INSTANCE_ID=`aws elbv2 describe-target-health --target-group-arn $INACTIVE_TARGET_ARN | jq -r '.TargetHealthDescriptions[].Target.Id'`
+
+        aws ec2 start-instances --instance-ids $INACTIVE_TARGET_INSTANCE_ID
+        aws ec2 stop-instances --instance-ids $ACTIVE_TARGET_INSTANCE_ID
