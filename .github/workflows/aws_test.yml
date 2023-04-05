@@ -42,6 +42,14 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
+      
+    - name: Install Docker
+      run: |
+        brew update
+        brew install --cask docker
+        open --background -a Docker
+        sleep 10
+        docker version
+        
     - name: Build Docker image
       run: docker image build -t :latest .
