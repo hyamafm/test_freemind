@@ -52,7 +52,7 @@ jobs:
         # AWS CLIの設定
         aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY }}
         aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws configure set region ap-northeast-1
+        aws configure set us-west-2
 
     - name: Start EC2 instance
       run: |
