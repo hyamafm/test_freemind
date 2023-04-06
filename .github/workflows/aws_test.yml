@@ -66,5 +66,5 @@ jobs:
         docker run --rm -t \
         -v "$PWD":/data \
         -v /tmp/ssh_agent.sock:/tmp/ssh-agent.sock \
-        --env SSH_AUTH_SOCK=/tmp/ssh-agent.sock
+        --env SSH_AUTH_SOCK=/tmp/ssh-agent.sock \
         test dep deploy test
