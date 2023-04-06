@@ -53,14 +53,20 @@ jobs:
         
     - name: Build Docker image
       run: docker image build -t test:latest .
-      
-    - name: Deploy
+          
+    - name: Start SSH agent
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
         eval "$(ssh-agent -s)"
         ssh-add "${SSH_PRIVATE_KEY}"
-        docker run \
-          --rm -t -v "$PWD":/data -v $SSH_AUTH_SOCK:/tmp/ssh-agent.sock \
-          --env SSH_AUTH_SOCK=$SSH_AUTH_SOCK test dep deploy test 
-          
+        export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
+        ln -sf "$SSH_AUTH_SOCK" /tmp/ssh-agent.sock
+
+    - name: Deploy
+      run: |
+        docker run --rm -t \
+        -v "$PWD":/data \
+        -v /tmp/ssh-agent.sock:/tmp/ssh-agent.sock \
+        -e SSH_AUTH_SOCK=/tmp/ssh-agent.sock \
+        test dep deploy test
