@@ -5,6 +5,9 @@ require 'recipe/common.php';
 
 set('application', 'test');
 set('repository', 'git@github.com:hyamafm/test_freemind.git');
+set('deploy_path', '/home/appadmin/test');
+set('user', 'appadmin');
+set('ssh_private_key', file_get_contents('/home/appadmin/.ssh/github_key'));
 
 // Add shared_dirs
 set('shared_dirs', []);
