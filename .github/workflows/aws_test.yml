@@ -59,5 +59,6 @@ jobs:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
         docker run \
-          --rm -t -v  "$PWD":/data test dep deploy \
-          -e SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY}"
+          -e SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY}" \
+          --rm -t -v  "$PWD":/data test dep deploy
+          
