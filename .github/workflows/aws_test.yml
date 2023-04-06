@@ -59,7 +59,7 @@ jobs:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
         eval \"$(ssh-agent -s)\" && ssh-add ${SSH_PRIVATE_KEY}
-        mount | grep tmp
+        echo $SSH_AUTH_SOCK
         docker run \
           --rm -t -v "$PWD":/data -v $SSH_AUTH_SOCK:/tmp/ssh-agent.sock \
           --env SSH_AUTH_SOCK=/tmp/ssh-agent.sock test dep deploy test 
