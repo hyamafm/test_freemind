@@ -6,6 +6,7 @@ require 'recipe/common.php';
 set('application', 'test');
 set('repository', 'git@github.com:hyamafm/test_freemind.git');
 set('deploy_path', '/home/ec2-user/test');
+set('user', 'appadmin');
 
 // Add shared_dirs
 set('shared_dirs', []);
