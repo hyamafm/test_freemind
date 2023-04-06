@@ -62,10 +62,9 @@ jobs:
         ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
 
     - name: Deploy
-      env:
-        SSH_AUTH_SOCK: /tmp/ssh_agent.sock
       run: |
         docker run --rm -t \
         -v "$PWD":/data \
-        -v /tmp/ssh-agent.sock:/tmp/ssh-agent.sock \
+        -v /tmp/ssh_agent.sock:/tmp/ssh-agent.sock \
+        --env SSH_AUTH_SOCK=/tmp/ssh-agent.sock
         test dep deploy test
