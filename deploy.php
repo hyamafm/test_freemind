@@ -2,11 +2,10 @@
 namespace Deployer;
 
 require 'recipe/common.php';
+inventory('host_test.yml');
 
 set('application', 'test');
 set('repository', 'git@github.com:hyamafm/test_freemind.git');
-set('deploy_path', '/home/appadmin/test');
-set('user', 'appadmin');
 
 // Add shared_dirs
 set('shared_dirs', []);
@@ -28,13 +27,13 @@ set('writable_dirs', []);
 task('deploy', [
     'deploy:info',
     'deploy:prepare',
-    'deploy:lock',
+    // 'deploy:lock',
     'deploy:release',
     'deploy:update_code',
     'deploy:shared',
     'deploy:writable',
     'deploy:vendors',
     'deploy:clear_paths',
-    'deploy:symlink',
-    'deploy:unlock'
+    'deploy:symlink'
+    // 'deploy:unlock'
 ]);
