@@ -34,6 +34,5 @@ task('deploy', [
     'deploy:vendors',
     'deploy:clear_paths',
     'deploy:symlink',
-    'deploy:cleanup',
     'deploy:unlock'
 ]);
