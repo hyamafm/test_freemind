@@ -62,5 +62,5 @@ jobs:
         ssh-add "${SSH_PRIVATE_KEY}"
         docker run \
           --rm -t -v "$PWD":/data -v $SSH_AUTH_SOCK:/tmp/ssh-agent.sock \
-          -e SSH_AUTH_SOCK=$SSH_AUTH_SOCK test dep deploy test 
+          --env SSH_AUTH_SOCK=$SSH_AUTH_SOCK test dep deploy test 
           
