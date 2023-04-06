@@ -54,7 +54,10 @@ jobs:
     - name: Build Docker image
       run: docker image build -t test:latest .
       
-    - name: deploy done
-      shell: bash
+    - name: Deploy
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       run: |
-        ./release.sh
+        docker run \
+          -rm -t -v  "$PWD":/data test dep deploy \
+          -e SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY}"
