@@ -60,5 +60,6 @@ jobs:
       run: |
         docker run \
           -e SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY}" \
+          -e "GIT_SSH_COMMAND=ssh -o StrictHostKeyChecking=no" \
           --rm -t -v  "$PWD":/data test dep deploy
           
