@@ -60,7 +60,7 @@ jobs:
       run: |
         eval "$(ssh-agent -s)"
         ssh-add "${SSH_PRIVATE_KEY}"
-        
+        ssh-add -l
         export SSH_AUTH_SOCK="${XDG_RUNTIME_DIR}/ssh-agent.socket"
         ln -sf "$SSH_AUTH_SOCK" /tmp/ssh-agent.sock
 
