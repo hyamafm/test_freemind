@@ -6,6 +6,7 @@ inventory('host_test.yml');
 
 set('application', 'test');
 set('repository', 'git@github.com:hyamafm/test_freemind.git');
+set('composer_options', 'install --verbose --prefer-dist --no-progress --no-interaction --optimize-autoloader');
 
 // Add shared_dirs
 set('shared_dirs', []);
