@@ -43,13 +43,36 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
     
-    
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-northeast-1
+
+    - name: Get EC2 instance
+      shell: bash
+      run: |
+        ALB_ARN=`aws elbv2 describe-load-balancers --names=dev-elb-test | jq -r '.LoadBalancers[].LoadBalancerArn'`
+        LISTENER_ARN=`aws elbv2 describe-listeners --load-balancer-arn $ALB_ARN | jq -r '.Listeners[] | select(.Port == 443)' | jq -r '.ListenerArn'`
+        ACTIVE_TARGET_ARN=`aws elbv2 describe-listeners --load-balancer-arn $ALB_ARN | jq -r '.Listeners[] | select(.Port == 443)' | jq -r '.DefaultActions[].ForwardConfig.TargetGroups[] | select(.Weight == 1)' | jq -r '.TargetGroupArn'`
+        # INACTIVE_TARGET_ARN=`aws elbv2 describe-listeners --load-balancer-arn $ALB_ARN | jq -r '.Listeners[] | select(.Port == 443)' | jq -r '.DefaultActions[].ForwardConfig.TargetGroups[] | select(.Weight == 0)' | jq -r '.TargetGroupArn'`
+        ACTIVE_TARGET_INSTANCE_ID=`aws elbv2 describe-target-health --target-group-arn $ACTIVE_TARGET_ARN | jq -r '.TargetHealthDescriptions[].Target.Id'`
+        # INACTIVE_TARGET_INSTANCE_ID=`aws elbv2 describe-target-health --target-group-arn $INACTIVE_TARGET_ARN | jq -r '.TargetHealthDescriptions[].Target.Id'`
+        # aws ec2 start-instances --instance-ids $INACTIVE_TARGET_INSTANCE_ID
+        # aws ec2 wait instance-running --instance-ids $INACTIVE_TARGET_INSTANCE_ID
+        # EC2_STATUS=`aws ec2 describe-instance-status --include-all-instances --instance-ids $INACTIVE_TARGET_INSTANCE_ID | jq -r '.InstanceStatuses[].InstanceState.Name'`
+        # if [ $EC2_STATUS = "running" ]; then
+        #   echo "$INACTIVE_TARGET_INSTANCE_IDを起動しました"
+        # else
+        #   echo "$INACTIVE_TARGET_INSTANCE_IDは起動に失敗しました。"
+        # fi
+        # aws elbv2 modify-listener \
+        # --listener-arn  $LISTENER_ARN \
+        # --default-actions '[{"Type": "forward", "Order": 1, "ForwardConfig": {"TargetGroups": [{ "TargetGroupArn": "'$ACTIVE_TARGET_ARN'", "Weight": 0},{"TargetGroupArn": "'$INACTIVE_TARGET_ARN'", "Weight": 1}], "TargetGroupStickinessConfig": {"Enabled": true, "DurationSeconds": 30}}}]'
+        # aws ec2 stop-instances --instance-ids $ACTIVE_TARGET_INSTANCE_ID
+        ACTIVE_TARGET_INSTANCE_NAME=`aws ec2 describe-instances --instance-ids $ACTIVE_TARGET_INSTANCE_ID --query 'Reservations[].Instances[].Tags[?Key==`Name`].Value' --output text | tr -d '\r'`
+        echo $ACTIVE_TARGET_INSTANCE_NAME
         
     - name: Build Docker image
       run: docker image build -t test:latest .
@@ -63,8 +86,9 @@ jobs:
 
     - name: Deploy
       run: |
+        echo $ACTIVE_TARGET_INSTANCE_NAME
         docker run --rm -t \
         -v "$PWD":/data \
         -v /tmp/ssh_agent.sock:/tmp/ssh-agent.sock \
         --env SSH_AUTH_SOCK=/tmp/ssh-agent.sock \
-        test dep deploy bluegreen-test
+        test dep deploy $ACTIVE_TARGET_INSTANCE_NAME
