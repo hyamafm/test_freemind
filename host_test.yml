@@ -6,3 +6,11 @@ bluegreen-test:
   branch: main
   sshOptions:
     StrictHostKeyChecking: no
+i-02319da66a6a93991:
+  hostname: 34.212.164.101
+  stage: test
+  user: appadmin
+  deploy_path: /home/appadmin/test
+  branch: main
+  sshOptions:
+    StrictHostKeyChecking: no
