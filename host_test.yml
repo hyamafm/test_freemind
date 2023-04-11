@@ -1,5 +1,5 @@
 bluegreen-test:
-  hostname: 18.237.79.33
+  hostname: 34.212.187.11
   stage: test
   user: appadmin
   deploy_path: /home/appadmin/test
@@ -7,7 +7,7 @@ bluegreen-test:
   sshOptions:
     StrictHostKeyChecking: no
 bluegreen-test-green:
-  hostname: 34.219.137.39
+  hostname: 35.161.63.83
   stage: test
   user: appadmin
   deploy_path: /home/appadmin/test
