@@ -76,6 +76,7 @@ jobs:
           echo "$INACTIVE_TARGET_INSTANCE_IDは起動に失敗しました。"
         fi
         INACTIVE_TARGET_INSTANCE_NAME=$(aws ec2 describe-instances --instance-ids $INACTIVE_TARGET_INSTANCE_ID --query 'Reservations[].Instances[].Tags[?Key==`Name`].Value' --output text | tr -d '\r')
+        ACTIVE_TARGET_INSTANCE_NAME=$(aws ec2 describe-instances --instance-ids $ACTIVE_TARGET_INSTANCE_ID --query 'Reservations[].Instances[].Tags[?Key==`Name`].Value' --output text | tr -d '\r')
         echo "ALB_ARN=$ALB_ARN" >> $GITHUB_ENV
         echo "ACTIVE_TARGET_ARN=$ACTIVE_TARGET_ARN" >> $GITHUB_ENV
         echo "INACTIVE_TARGET_ARN=$INACTIVE_TARGET_ARN" >> $GITHUB_ENV
