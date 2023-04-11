@@ -6,7 +6,7 @@ bluegreen-test:
   branch: main
   sshOptions:
     StrictHostKeyChecking: no
-i-02319da66a6a93991:
+bluegreen-test-green:
   hostname: 34.212.164.101
   stage: test
   user: appadmin
