@@ -68,6 +68,7 @@ jobs:
         ACTIVE_TARGET_INSTANCE_ID=`aws elbv2 describe-target-health --target-group-arn $ACTIVE_TARGET_ARN | jq -r '.TargetHealthDescriptions[].Target.Id'`
         ACTIVE_TARGET_INSTANCE_NAME=$(aws ec2 describe-instances --instance-ids $ACTIVE_TARGET_INSTANCE_ID --query 'Reservations[].Instances[].Tags[?Key==`Name`].Value' --output text | tr -d '\r')
         echo "$ACTIVE_TARGET_INSTANCE_NAME"
+        echo "ACTIVE_TARGET_INSTANCE_NAME=$ACTIVE_TARGET_INSTANCE_NAME" >> $GITHUB_ENV
         
     - name: Build Docker image
       run: docker image build -t test:latest .
