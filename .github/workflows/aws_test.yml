@@ -81,7 +81,7 @@ jobs:
 
     - name: Deploy
       run: |
-        echo $ACTIVE_TARGET_INSTANCE_NAME
+        echo "$ACTIVE_TARGET_INSTANCE_NAME"
         docker run --rm -t \
         -v "$PWD":/data \
         -v /tmp/ssh_agent.sock:/tmp/ssh-agent.sock \
