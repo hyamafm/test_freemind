@@ -1,4 +1,4 @@
-test:
+bluegreen-test:
   hostname: 18.237.79.33
   stage: test
   user: appadmin
